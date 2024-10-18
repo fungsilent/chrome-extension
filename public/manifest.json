@@ -1,0 +1,10 @@
+{
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "name": "JFSD12 Shcedule",
+    "description": "Get shcedule from slack",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "JFSD12 Shcedule"
+    }
+}
