@@ -7,7 +7,7 @@ html {
 }
 #root {
     display: flex;
-    width: 600px;
+    width: 800px;
     height: 600px;
     background-color: #531754;
     color: #fff;
@@ -37,4 +37,23 @@ main {
 }
 .section-error .error-auth .name {
     font-size: 24px;
+}
+
+.pdf {
+    overflow: scroll;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
 }
