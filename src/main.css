@@ -2,13 +2,27 @@
     box-sizing: border-box;
     margin: 0;
 }
+/* width */
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+}
 html {
     background-color: #d4d4d4;
 }
 #root {
     display: flex;
     width: 800px;
-    height: 600px;
+    min-height: 600px;
     background-color: #531754;
     color: #fff;
 }
@@ -17,6 +31,7 @@ main {
     height: 100%;
 }
 
+/* Main */
 .section-error {
     display: flex;
     justify-content: center;
@@ -39,21 +54,26 @@ main {
     font-size: 24px;
 }
 
-.pdf {
-    overflow: scroll;
+/* PDF modal */
+.view-pdf {
+    display: flex;
+    background-color: #dfdfdf;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 0.25rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
-
-/* width */
-::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
+.view-pdf .close {
+    padding: 0 0.5rem;
+    background-color: #531754;
+    color: #fff;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
 }
-/* Track */
-::-webkit-scrollbar-track {
-}
-/* Handle */
-::-webkit-scrollbar-thumb {
-}
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.view-pdf .close:hover {
+    background-color: #6f3270;
 }

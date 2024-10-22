@@ -9,6 +9,7 @@ import './main.css'
 
 const App = () => {
     const [modalOpen, setModalOpen] = useState(false)
+    const [pdf, setPdf] = useState('')
     const [error, setError] = useState('')
     const [data, setData] = useState({})
 
@@ -17,17 +18,17 @@ const App = () => {
     useEffect(() => {
         const doFetch = async () => {
             const [data, error] = await fetchMessage()
-            console.log('doFetch', data, error)
             setError(error)
             setData(data)
         }
         doFetch()
     }, [])
 
-    let pdf =
-        'https://files.slack.com/files-pri/T07K4E7N8AG-F07S9CUQWSE/week_9.pdf'
-    pdf =
-        'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+    const openModal = pdf => {
+        setPdf(pdf)
+        setModalOpen(true)
+    }
+    const closeModal = () => setModalOpen(false)
 
     // TODO: display data
 
@@ -36,11 +37,16 @@ const App = () => {
         <Worker workerUrl='./pdf.worker.min.js'>
             <main>
                 {!!error && <Error message={error} />}
-                {!error && <Shcedule data={data} />}
+                {!error && (
+                    <Shcedule
+                        data={data}
+                        openModal={openModal}
+                    />
+                )}
                 <ViewPDF
                     pdf={pdf}
                     modalOpen={modalOpen}
-                    setModalOpen={setModalOpen}
+                    closeModal={closeModal}
                 />
             </main>
         </Worker>
