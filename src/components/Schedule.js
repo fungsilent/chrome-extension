@@ -2,64 +2,102 @@ const Shcedule = ({ data, openModal }) => {
     // files[0].url_private
     // let pdf =
     //     'https://files.slack.com/files-pri/T07K4E7N8AG-F07S9CUQWSE/week_9.pdf'
-    // console.log()
-    // const filterText = messages => {
-    //     const result = []
-    //     for (const msg of messages) {
-    //         if (msg.text && msg.text.includes('Week')) {
-    //             const start = msg.text.indexOf('Week')
-    //             const end = msg.text.length
-    //             result.push(
-    //                 msg.text
-    //                     .substring(start, end)
-    //                     .replace(/\*/g, '')
-    //                     .replace(/  /g, '\n')
-    //                     .replace(
-    //                         /, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T./g,
-    //                         ''
-    //                     )
-    //                     .replace(/<[^|]*\|/g, '')
-    //                     .replace(/>/g, '')
-    //             )
-    //         }
-    //     }
-    //     return result
-    // }
-    // const weekTexts = filterText(data.history.messages)
-    // const [selectedWeek, setSelectedWeek] = useState(null)
-    // const handleChange = event => {
-    //     setSelectedWeek(Number(event.target.value))
-    // }
-    // return (
-    //     <div>
-    //         <select onChange={handleChange}>
-    //             <option
-    //                 value=''
-    //                 disabled
-    //                 selected
-    //             >
-    //                 Select Week
-    //             </option>
-    //             {weekTexts.map((text, index) => {
-    //                 const weekNumber = text.match(/Week \d+/)[0]
-    //                 return (
-    //                     <option
-    //                         key={index}
-    //                         value={index}
-    //                     >
-    //                         {weekNumber}
-    //                     </option>
-    //                 )
-    //             })}
-    //         </select>
-    //         {selectedWeek !== null && (
-    //             <div>
-    //                 <pre>{weekTexts[selectedWeek]}</pre>
-    //             </div>
-    //         )}
-    //         <button onClick={() => openModal(testPdf())}>View PDF</button>
-    //     </div>
-    // )
+
+    console.log('data', data)
+
+    return (
+        <section className='shcedule'>
+            {data.map(weekData => (
+                <div
+                    key={weekData.week}
+                    className='week'
+                >
+                    <p className='week-num'>Week {weekData.week}</p>
+                    <div
+                        className='view-pdf'
+                        onClick={() => openModal(weekData.pdf)}
+                    >
+                        View PDF
+                    </div>
+                    <div className='day-container'>
+                        {weekData.schedule.map((dayData, index) => (
+                            <Day
+                                key={index}
+                                {...dayData}
+                            />
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </section>
+    )
+}
+
+const Day = props => {
+    // console.log('Day', props)
+    const { day, holiday, am, pm, both } = props
+
+    const renderInPerson = ({ floor, room }) => (
+        <div className='in-person'>
+            <p className='title'>In Person</p>
+            <p className='content'>
+                <span>{floor}/F</span>
+                <span>Room {room}</span>
+            </p>
+        </div>
+    )
+
+    const renderOnline = ({ name, link, remark, time }) => (
+        <div className='online'>
+            <p className='title'>
+                <span>Online</span>
+                <span className='time'>{time}</span>
+            </p>
+            <p className='content'>
+                <span>{name}</span>
+                {!!link && (
+                    <a
+                        className='link'
+                        href={link}
+                        target='_blank'
+                    >
+                        Teams
+                    </a>
+                )}
+                {!!remark && <span className='remark'>{remark}</span>}
+            </p>
+        </div>
+    )
+
+    const renderInfo = (type, { isOnline, ...rest }) => {
+        const timeMap = {
+            am: 'AM',
+            pm: 'PM',
+        }
+        return (
+            <div className={`class ${type}`}>
+                {isOnline
+                    ? renderOnline({ ...rest, time: timeMap[type] })
+                    : renderInPerson(rest)}
+            </div>
+        )
+    }
+
+    const renderHoliday = () => (
+        <div className='class holiday'>
+            <p className='title'>Holiday</p>
+        </div>
+    )
+
+    return (
+        <div className='day'>
+            <div className='date'>{day}</div>
+            {!!am && renderInfo('am', am)}
+            {!!pm && renderInfo('pm', pm)}
+            {!!both && renderInfo('both', both)}
+            {!!holiday && renderHoliday()}
+        </div>
+    )
 }
 
 const testPdf = () => {

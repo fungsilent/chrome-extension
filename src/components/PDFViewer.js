@@ -1,6 +1,6 @@
 import { Viewer } from '@react-pdf-viewer/core'
 import { SelectionMode } from '@react-pdf-viewer/selection-mode'
-import { toolbarPlugin, ToolbarSlot } from '@react-pdf-viewer/toolbar'
+import { toolbarPlugin } from '@react-pdf-viewer/toolbar'
 import '@react-pdf-viewer/toolbar/lib/styles/index.css'
 import '@react-pdf-viewer/core/lib/styles/index.css'
 
@@ -17,7 +17,7 @@ const styles = {
     },
 }
 
-const ViewPDF = ({ pdf, modalOpen, closeModal }) => {
+const PDFViewer = ({ pdf, modalOpen, closeModal }) => {
     const toolbarPluginInstance = toolbarPlugin({
         selectionModePlugin: {
             selectionMode: SelectionMode.Hand,
@@ -45,7 +45,7 @@ const ViewPDF = ({ pdf, modalOpen, closeModal }) => {
             onRequestClose={closeModal}
             style={styles}
         >
-            <div className='view-pdf'>
+            <div className='pdf-viewer'>
                 <Toolbar>{renderDefaultToolbar(toolbarTransform)}</Toolbar>
                 <div
                     className='close'
@@ -63,4 +63,4 @@ const ViewPDF = ({ pdf, modalOpen, closeModal }) => {
     )
 }
 
-export default ViewPDF
+export default PDFViewer

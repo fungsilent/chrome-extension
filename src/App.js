@@ -3,7 +3,7 @@ import { Worker } from '@react-pdf-viewer/core'
 
 import Error from './components/Error'
 import Shcedule from './components/Schedule'
-import ViewPDF from './components/ViewPDF'
+import PDFViewer from './components/PDFViewer'
 import { fetchMessage } from './data'
 import './main.css'
 
@@ -11,9 +11,7 @@ const App = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const [pdf, setPdf] = useState('')
     const [error, setError] = useState('')
-    const [data, setData] = useState({})
-
-    console.log('data', data)
+    const [data, setData] = useState([])
 
     useEffect(() => {
         const doFetch = async () => {
@@ -30,8 +28,6 @@ const App = () => {
     }
     const closeModal = () => setModalOpen(false)
 
-    // TODO: display data
-
     /* render */
     return (
         <Worker workerUrl='./pdf.worker.min.js'>
@@ -43,7 +39,7 @@ const App = () => {
                         openModal={openModal}
                     />
                 )}
-                <ViewPDF
+                <PDFViewer
                     pdf={pdf}
                     modalOpen={modalOpen}
                     closeModal={closeModal}

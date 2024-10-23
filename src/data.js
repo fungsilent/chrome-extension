@@ -3157,6 +3157,8 @@ export const testData = {
 
 export const fetchMessage = async () => {
     if (!chrome?.runtime) {
+        /* development use */
+        // return [null, 'invalid_auth']
         // return [null, 'unkonwn']
         return [formatMessage(testData.history.messages), null]
     }
@@ -3191,7 +3193,6 @@ export const fetchMessage = async () => {
 
 const formatMessage = messages => {
     const filteredData = messages.filter(message => !!message.files)
-    console.log('filteredData', filteredData)
     const schedules = filteredData.map(item => {
         const texts = item.blocks[0].elements[0].elements
         const schedule = formatWeekSchedule(texts)
@@ -3225,56 +3226,82 @@ const roomMap = [
 ]
 
 const formatWeekSchedule = elements => {
-    console.log('elements', elements)
     let data = {
         week: '',
         schedule: [],
     }
-    let dayIndex = -1
-    elements.forEach((elem, index) => {
-        if (elem.type === 'link') return
+    // data mapping flag
+    let dayFlag = -1
+    let timeFlag = ''
+
+    elements.forEach(elem => {
         // dont ask why need forEach, slack is suck
         elem.text.split('\n').forEach(exactElem => {
             const text = exactElem
             const textLow = text.toLowerCase()
             if (!text) return
 
+            // week
             const week = text.match(/Week \d+/)
             if (!!week) {
                 data.week = Number(week[0].split(' ')[1])
                 return
             }
 
+            // day
             const day = text.match(/\d{1,2} [A-Za-z]{3} \([A-Za-z]{3,4}\)/)
-            if (day) {
-                dayIndex++
-                data.schedule[dayIndex] = {
+            if (!!day) {
+                dayFlag++
+                timeFlag = ''
+                data.schedule[dayFlag] = {
                     day: day[0],
                 }
                 return
             }
 
             /* handle day data */
+            // holiday
             if (textLow.search('public holiday') > -1) {
-                data.schedule[dayIndex] = {
-                    ...data.schedule[dayIndex],
+                data.schedule[dayFlag] = {
+                    ...data.schedule[dayFlag],
                     holiday: true,
                 }
                 return
             }
 
-            // isOnline
-            if (textLow.search('online') > -1) {
-                data.schedule[dayIndex] = {
-                    ...data.schedule[dayIndex],
-                    isOnline: true,
+            // teams link text
+            const time = text.match(/AM|PM/)
+            if (time) {
+                timeFlag = time[0].toLowerCase()
+            }
+            if (textLow.search('teams link') > -1) {
+                const [head, remark] = text
+                    .replace(/AM|PM/, '')
+                    .split('Teams Link')
+                const [, name] = head.match(/\s*(\w+)/)
+
+                // check timeFlag for online
+                timeFlag = !!timeFlag ? timeFlag : 'both'
+
+                data.schedule[dayFlag] = {
+                    ...data.schedule[dayFlag],
+                    [timeFlag]: {
+                        name,
+                        remark: remark.replace(':', '').trim(),
+                        link: '',
+                        isOnline: true,
+                    },
                 }
                 return
             }
-            if (textLow.search('face') > -1) {
-                data.schedule[dayIndex] = {
-                    ...data.schedule[dayIndex],
-                    isOnline: false,
+            // teams link url
+            if (text.search('https://') > -1) {
+                data.schedule[dayFlag] = {
+                    ...data.schedule[dayFlag],
+                    [timeFlag]: {
+                        ...data.schedule[dayFlag][timeFlag],
+                        link: text,
+                    },
                 }
                 return
             }
@@ -3282,115 +3309,20 @@ const formatWeekSchedule = elements => {
             // room
             const address = roomMap.find(item => item.address === text)
             if (!!address) {
-                data.schedule[dayIndex] = {
-                    ...data.schedule[dayIndex],
-                    ...address,
-                }
-                return
-            }
+                // check timeFlag for in-person
+                timeFlag = !!timeFlag ? timeFlag : 'both'
 
-            // teams link
-            if (textLow.search('teams link') > -1) {
-                const [first, desc] = text.split('Teams Link')
-                const [input, time, name] = first.match(/(AM|PM)?\s*(\w+)/)
-                const link =
-                    elements[index + 1]?.text.match(/^https:\/\//)?.input
-
-                data.schedule[dayIndex] = {
-                    ...data.schedule[dayIndex],
-                    [time?.toLowerCase() ?? 'both']: {
-                        name,
-                        link,
+                data.schedule[dayFlag] = {
+                    ...data.schedule[dayFlag],
+                    [timeFlag]: {
+                        ...address,
+                        isOnline: false,
                     },
                 }
                 return
             }
-            console.log(`[DEBUG] index - ${index}`, text)
+            // console.log(`[DEBUG] index - ${index}`, text)
         })
     })
     return data
 }
-
-// const formatWeekSchedule = elements => {
-//     console.log('elements', elements)
-//     let data = {
-//         week: '',
-//         schedule: [],
-//     }
-//     let data.schedule[dayIndex] = {}
-//     elements.forEach((elem, i) => {
-//         const text = elem.text.replaceAll('\n', '')
-//         const textLow = text.toLowerCase()
-//         if (!text) return
-
-//         const week = text.match(/Week \d+/)
-//         if (!!week) {
-//             data.week = Number(week[0].split(' ')[1])
-//             return
-//         }
-
-//         if (textLow.search('public holiday') > -1) {
-//             data.schedule[dayIndex] = {
-//                 ...data.schedule[dayIndex],
-//                 holiday: true,
-//             }
-//             return
-//         }
-
-//         const day = text.match(/\d{1,2} [A-Za-z]{3} \([A-Za-z]{3,4}\)/)
-//         console.log('debug', day)
-//         if (day) {
-//             data.schedule[dayIndex] = {
-//                 day: day[0],
-//             }
-//             return
-//         }
-
-//         // handle day data
-//         // isOnline
-//         if (textLow.search('online') > -1) {
-//             data.schedule[dayIndex] = {
-//                 ...data.schedule[dayIndex],
-//                 isOnline: true,
-//             }
-//             return
-//         }
-//         if (textLow.search('face') > -1) {
-//             data.schedule[dayIndex] = {
-//                 ...data.schedule[dayIndex],
-//                 isOnline: false,
-//             }
-//             return
-//         }
-
-//         // room
-//         const address = roomMap.find(item => item.address === text)
-//         if (!!address) {
-//             data.schedule[dayIndex] = {
-//                 ...data.schedule[dayIndex],
-//                 ...address,
-//             }
-//             return
-//         }
-
-//         // teams link
-//         console.log('debug', text)
-//         if (text.startsWith('AM')) {
-//             const who = text.split('Teams Link')
-//             console.log('AM', who)
-//             data.schedule[dayIndex] = {
-//                 ...data.schedule[dayIndex],
-//                 am: {
-//                     name: who[0].replace('AM', '').replaceAll(' ', ''),
-//                     // teamsLink:
-//                 },
-//             }
-//             return
-//         }
-//         if (textLow.startsWith('pm')) {
-//         }
-
-//         data.schedule.push(data.schedule[dayIndex])
-//     })
-//     return data
-// }
