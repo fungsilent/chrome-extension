@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Worker } from '@react-pdf-viewer/core'
 
 import Error from './components/Error'
-import Shcedule from './components/Shcedule'
+import Shcedule from './components/Schedule'
 import ViewPDF from './components/ViewPDF'
 import { fetchMessage } from './data'
 import './main.css'

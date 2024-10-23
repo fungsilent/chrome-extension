@@ -1,38 +1,3 @@
-export const fetchMessage = async () => {
-    if (!chrome?.runtime) {
-        // return [null, 'unkonwn']
-        return [testData, null]
-    }
-    try {
-        const formData = new FormData()
-        formData.append(
-            process.env.REACT_APP_WORKSPACE_TOKEN_KEY,
-            process.env.REACT_APP_WORKSPACE_TOKEN_VALUE
-        )
-        formData.append(
-            process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
-            process.env.REACT_APP_WORKSPACE_CHANNEL_VALUE
-        )
-
-        let response = await fetch(process.env.REACT_APP_HISTORY_API, {
-            method: 'POST',
-            credentials: 'include',
-            body: formData,
-        })
-        response = await response.json()
-
-        if (!response.ok) {
-            throw new Error(response.error)
-        }
-
-        // [data, error]
-        return [response, null]
-    } catch (err) {
-        console.log(`ERROR:`, err.message)
-        return [null, err.message]
-    }
-}
-
 export const testData = {
     ok: true,
     history: {
@@ -3189,3 +3154,243 @@ export const testData = {
         previous_names: [],
     },
 }
+
+export const fetchMessage = async () => {
+    if (!chrome?.runtime) {
+        // return [null, 'unkonwn']
+        return [formatMessage(testData.history.messages), null]
+    }
+    try {
+        const formData = new FormData()
+        formData.append(
+            process.env.REACT_APP_WORKSPACE_TOKEN_KEY,
+            process.env.REACT_APP_WORKSPACE_TOKEN_VALUE
+        )
+        formData.append(
+            process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
+            process.env.REACT_APP_WORKSPACE_CHANNEL_VALUE
+        )
+
+        let response = await fetch(process.env.REACT_APP_HISTORY_API, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData,
+        })
+        response = await response.json()
+
+        if (!response.ok) {
+            throw new Error(response.error)
+        }
+
+        return [formatMessage(response.history.messages), null]
+    } catch (err) {
+        console.log(`ERROR:`, err.message)
+        return [null, err.message]
+    }
+}
+
+const formatMessage = messages => {
+    const filteredData = messages.filter(message => !!message.files)
+    console.log('filteredData', filteredData)
+    const schedules = filteredData.map(item => {
+        const texts = item.blocks[0].elements[0].elements
+        const schedule = formatWeekSchedule(texts)
+        return {
+            ...schedule,
+            pdf: item.files[0].url_private,
+        }
+    })
+    return schedules
+}
+
+const roomMap = [
+    {
+        room: 1,
+        floor: 2,
+        address:
+            'Training Room 1, Unit 01A-B, 2/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
+    },
+    {
+        room: 2,
+        floor: 2,
+        address:
+            'Training Room 2, Unit 01A-B, 2/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
+    },
+    {
+        room: 3,
+        floor: 7,
+        address:
+            'Classroom, Unit 03, 7/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
+    },
+]
+
+const formatWeekSchedule = elements => {
+    console.log('elements', elements)
+    let data = {
+        week: '',
+        schedule: [],
+    }
+    let dayIndex = -1
+    elements.forEach((elem, index) => {
+        if (elem.type === 'link') return
+        // dont ask why need forEach, slack is suck
+        elem.text.split('\n').forEach(exactElem => {
+            const text = exactElem
+            const textLow = text.toLowerCase()
+            if (!text) return
+
+            const week = text.match(/Week \d+/)
+            if (!!week) {
+                data.week = Number(week[0].split(' ')[1])
+                return
+            }
+
+            const day = text.match(/\d{1,2} [A-Za-z]{3} \([A-Za-z]{3,4}\)/)
+            if (day) {
+                dayIndex++
+                data.schedule[dayIndex] = {
+                    day: day[0],
+                }
+                return
+            }
+
+            /* handle day data */
+            if (textLow.search('public holiday') > -1) {
+                data.schedule[dayIndex] = {
+                    ...data.schedule[dayIndex],
+                    holiday: true,
+                }
+                return
+            }
+
+            // isOnline
+            if (textLow.search('online') > -1) {
+                data.schedule[dayIndex] = {
+                    ...data.schedule[dayIndex],
+                    isOnline: true,
+                }
+                return
+            }
+            if (textLow.search('face') > -1) {
+                data.schedule[dayIndex] = {
+                    ...data.schedule[dayIndex],
+                    isOnline: false,
+                }
+                return
+            }
+
+            // room
+            const address = roomMap.find(item => item.address === text)
+            if (!!address) {
+                data.schedule[dayIndex] = {
+                    ...data.schedule[dayIndex],
+                    ...address,
+                }
+                return
+            }
+
+            // teams link
+            if (textLow.search('teams link') > -1) {
+                const [first, desc] = text.split('Teams Link')
+                const [input, time, name] = first.match(/(AM|PM)?\s*(\w+)/)
+                const link =
+                    elements[index + 1]?.text.match(/^https:\/\//)?.input
+
+                data.schedule[dayIndex] = {
+                    ...data.schedule[dayIndex],
+                    [time?.toLowerCase() ?? 'both']: {
+                        name,
+                        link,
+                    },
+                }
+                return
+            }
+            console.log(`[DEBUG] index - ${index}`, text)
+        })
+    })
+    return data
+}
+
+// const formatWeekSchedule = elements => {
+//     console.log('elements', elements)
+//     let data = {
+//         week: '',
+//         schedule: [],
+//     }
+//     let data.schedule[dayIndex] = {}
+//     elements.forEach((elem, i) => {
+//         const text = elem.text.replaceAll('\n', '')
+//         const textLow = text.toLowerCase()
+//         if (!text) return
+
+//         const week = text.match(/Week \d+/)
+//         if (!!week) {
+//             data.week = Number(week[0].split(' ')[1])
+//             return
+//         }
+
+//         if (textLow.search('public holiday') > -1) {
+//             data.schedule[dayIndex] = {
+//                 ...data.schedule[dayIndex],
+//                 holiday: true,
+//             }
+//             return
+//         }
+
+//         const day = text.match(/\d{1,2} [A-Za-z]{3} \([A-Za-z]{3,4}\)/)
+//         console.log('debug', day)
+//         if (day) {
+//             data.schedule[dayIndex] = {
+//                 day: day[0],
+//             }
+//             return
+//         }
+
+//         // handle day data
+//         // isOnline
+//         if (textLow.search('online') > -1) {
+//             data.schedule[dayIndex] = {
+//                 ...data.schedule[dayIndex],
+//                 isOnline: true,
+//             }
+//             return
+//         }
+//         if (textLow.search('face') > -1) {
+//             data.schedule[dayIndex] = {
+//                 ...data.schedule[dayIndex],
+//                 isOnline: false,
+//             }
+//             return
+//         }
+
+//         // room
+//         const address = roomMap.find(item => item.address === text)
+//         if (!!address) {
+//             data.schedule[dayIndex] = {
+//                 ...data.schedule[dayIndex],
+//                 ...address,
+//             }
+//             return
+//         }
+
+//         // teams link
+//         console.log('debug', text)
+//         if (text.startsWith('AM')) {
+//             const who = text.split('Teams Link')
+//             console.log('AM', who)
+//             data.schedule[dayIndex] = {
+//                 ...data.schedule[dayIndex],
+//                 am: {
+//                     name: who[0].replace('AM', '').replaceAll(' ', ''),
+//                     // teamsLink:
+//                 },
+//             }
+//             return
+//         }
+//         if (textLow.startsWith('pm')) {
+//         }
+
+//         data.schedule.push(data.schedule[dayIndex])
+//     })
+//     return data
+// }
