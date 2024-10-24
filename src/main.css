@@ -1,7 +1,7 @@
 * {
     box-sizing: border-box;
     margin: 0;
-    font-family: "Noto Sans", sans-serif;
+    font-family: "Open Sans", sans-serif;
 }
 a {
     text-decoration: none;
@@ -18,6 +18,8 @@ a {
 } */
 html {
     background-color: #d4d4d4;
+    font-size: 14px;
+    font-weight: 500;
 }
 #root {
     display: flex;
@@ -25,6 +27,7 @@ html {
     min-height: 600px;
     background-color: #FEFAE0;
     color: #283618;
+    font-size: 1rem;
 }
 main {
     width: 100%;
@@ -38,7 +41,6 @@ main {
     display: flex;
     flex-direction: column;
     background-color: #bc9e8d;
-    /* gap: 20px; */
 }
 .week {
     display: flex;
@@ -49,7 +51,7 @@ main {
     flex: 1;
     padding: 16px 24px;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 1.25rem;
     color: #FEFAE0;
 }
 .week .view-pdf {
@@ -80,7 +82,7 @@ main {
     gap: 12px;
 }
 .day .date {
-    font-weight: bold;
+    font-weight: 900;
     padding: 0 6px;
     text-align: center;
 }
@@ -95,7 +97,7 @@ main {
     background-color: #bf3300;
 }
 .day .in-person .title {
-    background-color: #e29a3b;
+    background-color: #DDA15E;
 }
 .day .online .title {
     background-color: #765333;
@@ -125,6 +127,7 @@ main {
 .day .content .remark {
     color: #283618;
     text-decoration: underline;
+    width: 100%;
 }
 
 /*

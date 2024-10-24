@@ -1,8 +1,4 @@
 const Shcedule = ({ data, openModal }) => {
-    // files[0].url_private
-    // let pdf =
-    //     'https://files.slack.com/files-pri/T07K4E7N8AG-F07S9CUQWSE/week_9.pdf'
-
     console.log('data', data)
 
     return (
@@ -12,7 +8,7 @@ const Shcedule = ({ data, openModal }) => {
                     key={weekData.week}
                     className='week'
                 >
-                    <p className='week-num'>Week {weekData.week}</p>
+                    <p className='week-num'>WEEK {weekData.week}</p>
                     <div
                         className='view-pdf'
                         onClick={() => openModal(weekData.pdf)}
@@ -98,17 +94,6 @@ const Day = props => {
             {!!holiday && renderHoliday()}
         </div>
     )
-}
-
-const testPdf = () => {
-    const real =
-        'https://files.slack.com/files-pri/T07K4E7N8AG-F07S9CUQWSE/week_9.pdf'
-    const test =
-        'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
-    if (!chrome?.runtime) {
-        return test
-    }
-    return real
 }
 
 export default Shcedule
