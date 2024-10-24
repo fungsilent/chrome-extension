@@ -33,9 +33,12 @@ const Day = props => {
     // console.log('Day', props)
     const { day, holiday, am, pm, both } = props
 
-    const renderInPerson = ({ floor, room }) => (
+    const renderInPerson = ({ floor, room, time }) => (
         <div className='in-person'>
-            <p className='title'>In Person</p>
+            <p className='title'>
+                <span>In Person</span>
+                <span className='time'>{time}</span>
+            </p>
             <p className='content'>
                 <span>{floor}/F</span>
                 <span>Room {room}</span>
@@ -70,11 +73,13 @@ const Day = props => {
             am: 'AM',
             pm: 'PM',
         }
+        const data = {
+            ...rest,
+            time: timeMap[type],
+        }
         return (
             <div className={`class ${type}`}>
-                {isOnline
-                    ? renderOnline({ ...rest, time: timeMap[type] })
-                    : renderInPerson(rest)}
+                {isOnline ? renderOnline(data) : renderInPerson(data)}
             </div>
         )
     }
