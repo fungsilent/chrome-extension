@@ -1,3 +1,5 @@
+import PDFIcon from './PDFIcon'
+
 const Shcedule = ({ data, openModal }) => {
     console.log('data', data)
 
@@ -13,7 +15,7 @@ const Shcedule = ({ data, openModal }) => {
                         className='view-pdf'
                         onClick={() => openModal(weekData.pdf)}
                     >
-                        View PDF
+                        <PDFIcon />
                     </div>
                     <div className='day-container'>
                         {weekData.schedule.map((dayData, index) => (
@@ -77,11 +79,7 @@ const Day = props => {
             ...rest,
             time: timeMap[type],
         }
-        return (
-            <div className={`class ${type}`}>
-                {isOnline ? renderOnline(data) : renderInPerson(data)}
-            </div>
-        )
+        return <div className={`class ${type}`}>{isOnline ? renderOnline(data) : renderInPerson(data)}</div>
     }
 
     const renderHoliday = () => (

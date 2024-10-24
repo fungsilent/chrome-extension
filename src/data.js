@@ -1,18 +1,36 @@
 import testJson from './data.test.json'
 
-export const fetchApiToken = async () => {
+const dev = {
+    messages: testJson.history.messages,
+    token: 'xoxc-7650483756356-7670809698848-7952057375728-2ded54a7655e088dd61ad2f6cb8be2b6b01f4823376fd274bd3c1e8719f06208',
+}
+
+const env = {
+    // API
+    BASE_API_URL: process.env.REACT_APP_BASE_API_URL,
+    TOKEN_API: process.env.REACT_APP_BASE_API_URL + process.env.REACT_APP_TOKEN_API,
+    HISTORY_API: process.env.REACT_APP_BASE_API_URL + process.env.REACT_APP_HISTORY_API,
+    // Value
+    WORKSPACE_TOKEN_KEY: process.env.REACT_APP_WORKSPACE_TOKEN_KEY,
+    WORKSPACE_CHANNEL_KEY: process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
+    WORKSPACE_CHANNEL_VALUE: process.env.REACT_APP_WORKSPACE_CHANNEL_VALUE,
+}
+
+export const fetchApiToken = async (development = false) => {
+    if (development) {
+        localStorage.setItem(env.WORKSPACE_TOKEN_KEY, dev.token)
+        localStorage.setItem(env.WORKSPACE_CHANNEL_KEY, env.WORKSPACE_CHANNEL_VALUE)
+        return true
+    }
     try {
-        const response = await fetch(process.env.REACT_APP_TOKEN_API, {
+        const response = await fetch(env.TOKEN_API, {
             credentials: 'include',
         })
         const html = await response.text()
         const [, token] = html.match(/"api_token":"([a-z0-9-]*)/)
         // TODO: how to make it fit to other cohort
-        localStorage.setItem(process.env.REACT_APP_WORKSPACE_TOKEN_KEY, token)
-        localStorage.setItem(
-            process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
-            process.env.REACT_APP_WORKSPACE_CHANNEL_VALUE
-        )
+        localStorage.setItem(env.WORKSPACE_TOKEN_KEY, token)
+        localStorage.setItem(env.WORKSPACE_CHANNEL_KEY, env.WORKSPACE_CHANNEL_VALUE)
 
         return true
     } catch (err) {
@@ -21,25 +39,18 @@ export const fetchApiToken = async () => {
     }
 }
 
-export const fetchMessage = async () => {
-    if (!chrome?.runtime) {
-        /* development use */
+export const fetchMessage = async (development = false) => {
+    if (development) {
         // return [null, 'invalid_auth']
         // return [null, 'unkonwn']
-        return [formatMessage(testJson.history.messages), null]
+        return [formatMessage(dev.messages), null]
     }
     try {
         const formData = new FormData()
-        formData.append(
-            process.env.REACT_APP_WORKSPACE_TOKEN_KEY,
-            localStorage.getItem(process.env.REACT_APP_WORKSPACE_TOKEN_KEY)
-        )
-        formData.append(
-            process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
-            localStorage.getItem(process.env.REACT_APP_WORKSPACE_CHANNEL_KEY)
-        )
+        formData.append(env.WORKSPACE_TOKEN_KEY, localStorage.getItem(env.WORKSPACE_TOKEN_KEY))
+        formData.append(env.WORKSPACE_CHANNEL_KEY, localStorage.getItem(env.WORKSPACE_CHANNEL_KEY))
 
-        let response = await fetch(process.env.REACT_APP_HISTORY_API, {
+        let response = await fetch(env.HISTORY_API, {
             method: 'POST',
             credentials: 'include',
             body: formData,
@@ -74,20 +85,17 @@ const roomMap = [
     {
         room: 1,
         floor: 2,
-        address:
-            'Training Room 1, Unit 01A-B, 2/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
+        address: 'Training Room 1, Unit 01A-B, 2/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
     },
     {
         room: 2,
         floor: 2,
-        address:
-            'Training Room 2, Unit 01A-B, 2/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
+        address: 'Training Room 2, Unit 01A-B, 2/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
     },
     {
         room: 3,
         floor: 7,
-        address:
-            'Classroom, Unit 03, 7/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
+        address: 'Classroom, Unit 03, 7/F, Millennium Trade Centre, 56 Kwai Cheong Road, Kwai Chung, N.T.',
     },
 ]
 

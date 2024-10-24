@@ -68,6 +68,10 @@ main {
     background-color: #31431d;
     border-right-width: 10px;
 }
+.week .view-pdf svg {
+    width: 30px;
+    aspect-ratio: 1/1;
+}
 .day-container {
     width: 100%;
     padding: 16px;

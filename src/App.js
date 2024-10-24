@@ -7,6 +7,9 @@ import PDFViewer from './components/PDFViewer'
 import { fetchApiToken, fetchMessage } from './data'
 import './main.css'
 
+/* development flag */
+const dev = true
+
 const App = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const [pdf, setPdf] = useState('')
@@ -15,12 +18,12 @@ const App = () => {
 
     useEffect(() => {
         const doFetch = async () => {
-            const isLogin = await fetchApiToken()
+            const isLogin = await fetchApiToken(dev)
             if (!isLogin) {
                 return setError('invalid_auth')
             }
 
-            const [data, error] = await fetchMessage()
+            const [data, error] = await fetchMessage(dev)
             setError(error)
             setData(data)
         }
