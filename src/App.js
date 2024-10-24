@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Worker } from '@react-pdf-viewer/core'
 
+import Loading from './components/Loading'
 import Error from './components/Error'
 import Shcedule from './components/Schedule'
 import PDFViewer from './components/PDFViewer'
@@ -13,19 +14,34 @@ const dev = false
 const App = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const [pdf, setPdf] = useState('')
-    const [error, setError] = useState('')
-    const [data, setData] = useState([])
+    const [{ isLoading, error, data }, setFetchData] = useState({
+        isLoading: false,
+        error: '',
+        data: [],
+    })
 
     useEffect(() => {
         const doFetch = async () => {
+            setFetchData(state => ({
+                ...state,
+                isLoading: true,
+            }))
             const isLogin = await fetchApiToken(dev)
             if (!isLogin) {
-                return setError('invalid_auth')
+                return setFetchData(state => ({
+                    ...state,
+                    isLoading: false,
+                    error: 'invalid_auth',
+                }))
             }
 
             const [data, error] = await fetchMessage(dev)
-            setError(error)
-            setData(data)
+            setFetchData(state => ({
+                ...state,
+                isLoading: false,
+                data,
+                error,
+            }))
         }
         doFetch()
     }, [])
@@ -40,6 +56,7 @@ const App = () => {
     return (
         <Worker workerUrl='./pdf.worker.min.js'>
             <main>
+                {isLoading && <Loading />}
                 {!!error && <Error message={error} />}
                 {!error && (
                     <Shcedule
