@@ -1,5 +1,26 @@
 import testJson from './data.test.json'
 
+export const fetchApiToken = async () => {
+    try {
+        const response = await fetch(process.env.REACT_APP_TOKEN_API, {
+            credentials: 'include',
+        })
+        const html = await response.text()
+        const [, token] = html.match(/"api_token":"([a-z0-9-]*)/)
+        // TODO: how to make it fit to other cohort
+        localStorage.setItem(process.env.REACT_APP_WORKSPACE_TOKEN_KEY, token)
+        localStorage.setItem(
+            process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
+            process.env.REACT_APP_WORKSPACE_CHANNEL_VALUE
+        )
+
+        return true
+    } catch (err) {
+        console.log(`[ERROR] fetchApiToken:`, err.message)
+        return false
+    }
+}
+
 export const fetchMessage = async () => {
     if (!chrome?.runtime) {
         /* development use */
@@ -11,11 +32,11 @@ export const fetchMessage = async () => {
         const formData = new FormData()
         formData.append(
             process.env.REACT_APP_WORKSPACE_TOKEN_KEY,
-            process.env.REACT_APP_WORKSPACE_TOKEN_VALUE
+            localStorage.getItem(process.env.REACT_APP_WORKSPACE_TOKEN_KEY)
         )
         formData.append(
             process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
-            process.env.REACT_APP_WORKSPACE_CHANNEL_VALUE
+            localStorage.getItem(process.env.REACT_APP_WORKSPACE_CHANNEL_KEY)
         )
 
         let response = await fetch(process.env.REACT_APP_HISTORY_API, {
@@ -31,7 +52,7 @@ export const fetchMessage = async () => {
 
         return [formatMessage(response.history.messages), null]
     } catch (err) {
-        console.log(`ERROR:`, err.message)
+        console.log(`[ERROR] fetchMessage:`, err.message)
         return [null, err.message]
     }
 }
@@ -78,7 +99,7 @@ const formatWeekSchedule = elements => {
     // data mapping flag
     let dayFlag = -1
     let timeFlag = ''
-    // console.log('elements', elements)
+
     elements.forEach((elem, index) => {
         // dont ask why need forEach, slack is suck
         elem.text.split('\n').forEach(exactElem => {
@@ -169,9 +190,8 @@ const formatWeekSchedule = elements => {
                     }
                     return
                 }
-                // console.log(`[DEBUG] index - ${index}`, text)
             } catch (err) {
-                console.log()
+                console.log(`[ERROR] formatWeekSchedule: ${index}`, err.message)
             }
         })
     })

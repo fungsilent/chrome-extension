@@ -4,7 +4,7 @@ import { Worker } from '@react-pdf-viewer/core'
 import Error from './components/Error'
 import Shcedule from './components/Schedule'
 import PDFViewer from './components/PDFViewer'
-import { fetchMessage } from './data'
+import { fetchApiToken, fetchMessage } from './data'
 import './main.css'
 
 const App = () => {
@@ -15,6 +15,11 @@ const App = () => {
 
     useEffect(() => {
         const doFetch = async () => {
+            const isLogin = await fetchApiToken()
+            if (!isLogin) {
+                return setError('invalid_auth')
+            }
+
             const [data, error] = await fetchMessage()
             setError(error)
             setData(data)

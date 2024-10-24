@@ -1,6 +1,4 @@
 const Error = ({ message }) => {
-    // let text = message === 'invalid_auth' ? ''
-
     const renderRequireAuth = () => {
         return (
             <div className='error error-auth'>
