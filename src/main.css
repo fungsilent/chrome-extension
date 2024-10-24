@@ -141,23 +141,27 @@ main {
     display: flex;
     background-color: #dfdfdf;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    padding: 0.25rem;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
+.pdf-viewer .toolbar {
+    flex: 1;
+    padding: 0.25rem;
+}
 .pdf-viewer .close {
-    padding: 0 0.5rem;
-    background-color: #531754;
-    color: #fff;
-    border-radius: 30px;
     display: flex;
     align-items: center;
-    font-weight: bold;
+    background-color: #283618;
+    border-right: 0 solid #dda15e;
+    color: #FEFAE0;
+    padding: 0 16px;
+    transition: .3s;
     cursor: pointer;
 }
 .pdf-viewer .close:hover {
-    background-color: #6f3270;
+    background-color: #31431d;
+    border-right-width: 10px;
 }
 
 /*

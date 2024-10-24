@@ -8,7 +8,7 @@ import { fetchApiToken, fetchMessage } from './data'
 import './main.css'
 
 /* development flag */
-const dev = true
+const dev = false
 
 const App = () => {
     const [modalOpen, setModalOpen] = useState(false)

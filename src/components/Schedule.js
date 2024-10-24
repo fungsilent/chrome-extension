@@ -5,9 +5,9 @@ const Shcedule = ({ data, openModal }) => {
 
     return (
         <section className='shcedule'>
-            {data.map(weekData => (
+            {data.map((weekData, weekIndex) => (
                 <div
-                    key={weekData.week}
+                    key={weekIndex}
                     className='week'
                 >
                     <p className='week-num'>WEEK {weekData.week}</p>
@@ -18,9 +18,9 @@ const Shcedule = ({ data, openModal }) => {
                         <PDFIcon />
                     </div>
                     <div className='day-container'>
-                        {weekData.schedule.map((dayData, index) => (
+                        {weekData.schedule.map((dayData, dayIndex) => (
                             <Day
-                                key={index}
+                                key={dayIndex}
                                 {...dayData}
                             />
                         ))}

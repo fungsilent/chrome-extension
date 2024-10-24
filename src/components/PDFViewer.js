@@ -14,6 +14,8 @@ const styles = {
     content: {
         inset: 0,
         padding: 0,
+        border: '',
+        borderRadius: 0,
     },
 }
 
@@ -46,7 +48,9 @@ const PDFViewer = ({ pdf, modalOpen, closeModal }) => {
             style={styles}
         >
             <div className='pdf-viewer'>
-                <Toolbar>{renderDefaultToolbar(toolbarTransform)}</Toolbar>
+                <div className='toolbar'>
+                    <Toolbar>{renderDefaultToolbar(toolbarTransform)}</Toolbar>
+                </div>
                 <div
                     className='close'
                     onClick={closeModal}

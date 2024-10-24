@@ -109,17 +109,17 @@ const formatWeekSchedule = elements => {
     let timeFlag = ''
 
     elements.forEach((elem, index) => {
-        // dont ask why need forEach, slack is suck
         elem.text.split('\n').forEach(exactElem => {
+            // dont ask why need forEach, slack is suck
             try {
                 const text = exactElem
                 const textLow = text.toLowerCase()
                 if (!text) return
 
                 // week
-                const week = text.match(/Week \d+/)
+                const week = text.match(/Week (\d+)/)
                 if (!!week) {
-                    data.week = Number(week[0].split(' ')[1])
+                    data.week = Number(week[1])
                     return
                 }
 
