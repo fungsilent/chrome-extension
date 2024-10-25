@@ -1,4 +1,3 @@
-import moment from 'moment'
 import testJson from './data.test.json'
 
 const dev = {
@@ -70,7 +69,7 @@ export const fetchMessage = async (development = false) => {
 }
 
 const formatMessage = messages => {
-    const filteredData = messages.filter(message => !!message.files)
+    const filteredData = messages.filter(message => message.files?.[0].filetype === 'pdf')
     const schedules = filteredData.map(item => {
         const texts = item.blocks[0].elements[0].elements
         const schedule = formatWeekSchedule(texts)

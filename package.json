@@ -1,6 +1,6 @@
 {
   "name": "mtr-react",
-  "version": "0.1.0",
+  "version": "1.1.1",
   "private": false,
   "dependencies": {
     "@react-pdf-viewer/core": "^3.12.0",
