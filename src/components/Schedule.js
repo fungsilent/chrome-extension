@@ -1,8 +1,8 @@
+import moment from 'moment'
 import PDFIcon from './PDFIcon'
 
 const Shcedule = ({ data, openModal }) => {
     console.log('data', data)
-
     return (
         <section className='shcedule'>
             {data.map((weekData, weekIndex) => (
@@ -10,17 +10,18 @@ const Shcedule = ({ data, openModal }) => {
                     key={weekIndex}
                     className='week'
                 >
-                    <p className='week-num'>WEEK {weekData.week}</p>
+                    <p className='week-num'>WEEK {weekData.week || data.length - weekIndex}</p>
                     <div
                         className='view-pdf'
                         onClick={() => openModal(weekData.pdf)}
                     >
                         <PDFIcon />
                     </div>
-                    <div className='day-container'>
+                    <div className='days'>
                         {weekData.schedule.map((dayData, dayIndex) => (
                             <Day
                                 key={dayIndex}
+                                baseOrder={dayIndex}
                                 {...dayData}
                             />
                         ))}
@@ -33,7 +34,11 @@ const Shcedule = ({ data, openModal }) => {
 
 const Day = props => {
     // console.log('Day', props)
-    const { day, holiday, am, pm, both } = props
+    const { baseOrder, date, day, month, holiday, am, pm, both } = props
+
+    // calculate is today
+    const today = moment()
+    const isToday = today.format('D') === day && today.format('MMM') === month
 
     const renderInPerson = ({ floor, room, time }) => (
         <div className='in-person'>
@@ -71,31 +76,70 @@ const Day = props => {
     )
 
     const renderInfo = (type, { isOnline, ...rest }) => {
-        const timeMap = {
-            am: 'AM',
-            pm: 'PM',
+        let data = { ...rest }
+        let style = {}
+        switch (type) {
+            case 'both': {
+                style = {
+                    order: baseOrder + 5,
+                    gridRow: 'span 2',
+                }
+                break
+            }
+            case 'am': {
+                style = {
+                    order: baseOrder + 5,
+                }
+                data = {
+                    ...data,
+                    time: 'AM',
+                }
+                break
+            }
+            case 'pm': {
+                style = {
+                    order: baseOrder + 10,
+                }
+                data = {
+                    ...data,
+                    time: 'PM',
+                }
+                break
+            }
         }
-        const data = {
-            ...rest,
-            time: timeMap[type],
-        }
-        return <div className={`class ${type}`}>{isOnline ? renderOnline(data) : renderInPerson(data)}</div>
+
+        return (
+            <div
+                className={`class ${type}`}
+                style={style}
+            >
+                {isOnline ? renderOnline(data) : renderInPerson(data)}
+            </div>
+        )
     }
 
     const renderHoliday = () => (
-        <div className='class holiday'>
+        <div
+            className={`class holiday`}
+            style={{ order: baseOrder + 5, gridRow: 'span 2' }}
+        >
             <p className='title'>Holiday</p>
         </div>
     )
 
     return (
-        <div className='day'>
-            <div className='date'>{day}</div>
+        <>
+            <div
+                className={`date ${isToday ? 'today' : ''}`}
+                style={{ order: baseOrder }}
+            >
+                {date}
+            </div>
             {!!am && renderInfo('am', am)}
             {!!pm && renderInfo('pm', pm)}
             {!!both && renderInfo('both', both)}
             {!!holiday && renderHoliday()}
-        </div>
+        </>
     )
 }
 

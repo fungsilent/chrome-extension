@@ -1,3 +1,4 @@
+import moment from 'moment'
 import testJson from './data.test.json'
 
 const dev = {
@@ -105,7 +106,7 @@ const formatWeekSchedule = elements => {
         schedule: [],
     }
     // data mapping flag
-    let dayFlag = -1
+    let dateFlag = -1
     let timeFlag = ''
 
     elements.forEach((elem, index) => {
@@ -123,22 +124,25 @@ const formatWeekSchedule = elements => {
                     return
                 }
 
-                // day
-                const day = text.match(/\d{1,2} [A-Za-z]{3} \([A-Za-z]{3,4}\)/)
-                if (!!day) {
-                    dayFlag++
+                // date
+                const date = text.match(/\d{1,2} [A-Za-z]{3} \([A-Za-z]{3,4}\)/)
+                if (!!date) {
+                    dateFlag++
                     timeFlag = ''
-                    data.schedule[dayFlag] = {
-                        day: day[0],
+                    const [day, month] = date[0].split(' ')
+                    data.schedule[dateFlag] = {
+                        date: date[0],
+                        day,
+                        month,
                     }
                     return
                 }
 
-                /* handle day data */
+                /* handle date data */
                 // holiday
                 if (textLow.search('public holiday') > -1) {
-                    data.schedule[dayFlag] = {
-                        ...data.schedule[dayFlag],
+                    data.schedule[dateFlag] = {
+                        ...data.schedule[dateFlag],
                         holiday: true,
                     }
                     return
@@ -146,10 +150,10 @@ const formatWeekSchedule = elements => {
 
                 // teams link url
                 if (text.search('https://') > -1) {
-                    data.schedule[dayFlag] = {
-                        ...data.schedule[dayFlag],
+                    data.schedule[dateFlag] = {
+                        ...data.schedule[dateFlag],
                         [timeFlag]: {
-                            ...data.schedule[dayFlag][timeFlag],
+                            ...data.schedule[dateFlag][timeFlag],
                             link: elem.url,
                         },
                     }
@@ -171,8 +175,8 @@ const formatWeekSchedule = elements => {
                     // check timeFlag for online
                     timeFlag = !!timeFlag ? timeFlag : 'both'
 
-                    data.schedule[dayFlag] = {
-                        ...data.schedule[dayFlag],
+                    data.schedule[dateFlag] = {
+                        ...data.schedule[dateFlag],
                         [timeFlag]: {
                             name,
                             remark: remark.replace(':', '').trim(),
@@ -189,8 +193,8 @@ const formatWeekSchedule = elements => {
                     // check timeFlag for in-person
                     timeFlag = !!timeFlag ? timeFlag : 'both'
 
-                    data.schedule[dayFlag] = {
-                        ...data.schedule[dayFlag],
+                    data.schedule[dateFlag] = {
+                        ...data.schedule[dateFlag],
                         [timeFlag]: {
                             ...address,
                             isOnline: false,

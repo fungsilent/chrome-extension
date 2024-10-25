@@ -9,7 +9,8 @@ import { fetchApiToken, fetchMessage } from './data'
 import './main.css'
 
 /* development flag */
-const dev = false
+const dev = process.env.REACT_APP_DEV === 'true'
+console.log('dev mode', dev)
 
 const App = () => {
     const [modalOpen, setModalOpen] = useState(false)
