@@ -1,11 +1,11 @@
 {
     "version": "1.0.0",
     "manifest_version": 3,
-    "name": "JFSD12 Shcedule",
-    "description": "Get shcedule from slack",
+    "name": "Weekly Shcedule",
+    "description": "Prettier weekly schedule from slack",
     "action": {
         "default_popup": "index.html",
-        "default_title": "JFSD12 Shcedule"
+        "default_title": "Weekly Shcedule"
     },
     "icons": {
         "16": "icon.png",
