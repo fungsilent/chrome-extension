@@ -1,10 +1,10 @@
 import moment from 'moment'
 import PDFIcon from './PDFIcon'
 
-const Shcedule = ({ data, openModal }) => {
+const Schedule = ({ data, openModal }) => {
     console.log('data', data)
     return (
-        <section className='shcedule'>
+        <section className='Schedule'>
             {data.map((weekData, weekIndex) => (
                 <div
                     key={weekIndex}
@@ -143,4 +143,4 @@ const Day = props => {
     )
 }
 
-export default Shcedule
+export default Schedule

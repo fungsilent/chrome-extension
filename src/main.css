@@ -36,8 +36,8 @@ main {
 /*
  * Main
  */
-/* Shcedule */
-.shcedule {
+/* Schedule */
+.Schedule {
     display: flex;
     flex-direction: column;
     background-color: #bc9e8d;

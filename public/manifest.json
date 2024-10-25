@@ -1,11 +1,11 @@
 {
     "version": "1.1.1",
     "manifest_version": 3,
-    "name": "Weekly Shcedule",
+    "name": "Weekly Schedule",
     "description": "Prettier weekly schedule from slack",
     "action": {
         "default_popup": "index.html",
-        "default_title": "Weekly Shcedule"
+        "default_title": "Weekly Schedule"
     },
     "icons": {
         "16": "icon.png",

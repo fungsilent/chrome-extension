@@ -3,7 +3,7 @@ import { Worker } from '@react-pdf-viewer/core'
 
 import Loading from './components/Loading'
 import Error from './components/Error'
-import Shcedule from './components/Schedule'
+import Schedule from './components/Schedule'
 import PDFViewer from './components/PDFViewer'
 import { fetchApiToken, fetchMessage } from './data'
 import './main.css'
@@ -60,7 +60,7 @@ const App = () => {
                 {isLoading && <Loading />}
                 {!!error && <Error message={error} />}
                 {!error && (
-                    <Shcedule
+                    <Schedule
                         data={data}
                         openModal={openModal}
                     />
