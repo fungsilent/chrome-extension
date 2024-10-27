@@ -1,7 +1,9 @@
+import Loader from './Loader'
+
 const Loading = () => {
     return (
         <section className='section-loading'>
-            <div className='loading'></div>
+            <Loader className='loading' />
         </section>
     )
 }

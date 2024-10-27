@@ -1,41 +1,85 @@
+import axios from 'axios'
 import testJson from './data.test.json'
+import config from './config'
+
+/*
+ * Config
+ */
+const { api, env } = config
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 const dev = {
     messages: testJson.history.messages,
-    token: 'xoxc-7650483756356-7670809698848-7952057375728-2ded54a7655e088dd61ad2f6cb8be2b6b01f4823376fd274bd3c1e8719f06208',
 }
 
-const env = {
-    // API
-    BASE_API_URL: process.env.REACT_APP_BASE_API_URL,
-    TOKEN_API: process.env.REACT_APP_BASE_API_URL + process.env.REACT_APP_TOKEN_API,
-    HISTORY_API: process.env.REACT_APP_BASE_API_URL + process.env.REACT_APP_HISTORY_API,
-    // Value
-    WORKSPACE_TOKEN_KEY: process.env.REACT_APP_WORKSPACE_TOKEN_KEY,
-    WORKSPACE_CHANNEL_KEY: process.env.REACT_APP_WORKSPACE_CHANNEL_KEY,
-    WORKSPACE_CHANNEL_VALUE: process.env.REACT_APP_WORKSPACE_CHANNEL_VALUE,
-}
-
-export const fetchApiToken = async (development = false) => {
-    if (development) {
-        localStorage.setItem(env.WORKSPACE_TOKEN_KEY, dev.token)
-        localStorage.setItem(env.WORKSPACE_CHANNEL_KEY, env.WORKSPACE_CHANNEL_VALUE)
-        return true
-    }
+/*
+ * Fetch function
+ */
+export const findWorkspace = async () => {
     try {
-        const response = await fetch(env.TOKEN_API, {
+        const response = await fetchData(api.findWorkspace, {
             credentials: 'include',
         })
+
+        const workspaces = response.current_teams.reduce((result, { teams }) => {
+            teams.forEach(workspace => {
+                result.push({
+                    id: workspace.id,
+                    name: workspace.name,
+                    domain: workspace.domain,
+                    url: workspace.url,
+                })
+            })
+            return result
+        }, [])
+
+        return workspaces
+    } catch (err) {
+        console.log(`[ERROR] findWorkspace:`, err)
+        return null
+    }
+}
+
+export const fetchWorkspaceToken = async url => {
+    try {
+        const response = await fetch(url, {
+            credentials: 'include',
+        })
+
         const html = await response.text()
         const [, token] = html.match(/"api_token":"([a-z0-9-]*)/)
-        // TODO: how to make it fit to other cohort
-        localStorage.setItem(env.WORKSPACE_TOKEN_KEY, token)
-        localStorage.setItem(env.WORKSPACE_CHANNEL_KEY, env.WORKSPACE_CHANNEL_VALUE)
 
-        return true
+        // localStorage.setItem(env.workspaceToken, token)
+        // localStorage.setItem(env.WORKSPACE_CHANNEL_KEY, env.WORKSPACE_CHANNEL_VALUE)
+
+        return token
     } catch (err) {
-        console.log(`[ERROR] fetchApiToken:`, err.message)
-        return false
+        console.log(`[ERROR] fetchWorkspaceToken:`, err.message)
+        return null
+    }
+}
+
+export const findChannel = async workspaceToken => {
+    try {
+        const response = await fetchData(api.findChannel, {
+            method: 'POST',
+            credentials: 'include',
+            data: createFormData({
+                // [env.workspaceToken]: localStorage.getItem(env.workspaceToken),
+                [env.workspaceToken]: workspaceToken,
+                types: 'public_channel,private_channel',
+            }),
+        })
+
+        const channels = response.channels.map(channel => ({
+            id: channel.id,
+            name: channel.name,
+        }))
+
+        return channels
+    } catch (err) {
+        console.log(`[ERROR] findChannel:`, err.message)
+        return null
     }
 }
 
@@ -47,10 +91,10 @@ export const fetchMessage = async (development = false) => {
     }
     try {
         const formData = new FormData()
-        formData.append(env.WORKSPACE_TOKEN_KEY, localStorage.getItem(env.WORKSPACE_TOKEN_KEY))
-        formData.append(env.WORKSPACE_CHANNEL_KEY, localStorage.getItem(env.WORKSPACE_CHANNEL_KEY))
+        formData.append(env.workspaceToken, localStorage.getItem(env.workspaceToken))
+        formData.append(env.workspaceChannel, localStorage.getItem(env.workspaceChannel))
 
-        let response = await fetch(env.HISTORY_API, {
+        let response = await fetch(api.fetchHistory, {
             method: 'POST',
             credentials: 'include',
             body: formData,
@@ -207,4 +251,29 @@ const formatWeekSchedule = elements => {
         })
     })
     return data
+}
+
+/*
+ * Helper
+ */
+export const fetchData = async (...arg) => {
+    try {
+        let response = await axios(...arg)
+        response = response.data
+
+        if (!response.ok) {
+            throw new Error(response.error)
+        }
+        return response
+    } catch (err) {
+        return null
+    }
+}
+
+const createFormData = objectData => {
+    const formData = new FormData()
+    for (const key in objectData) {
+        formData.append(key, objectData[key])
+    }
+    return formData
 }

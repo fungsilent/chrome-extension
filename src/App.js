@@ -3,14 +3,11 @@ import { Worker } from '@react-pdf-viewer/core'
 
 import Loading from './components/Loading'
 import Error from './components/Error'
+import Setting from './components/Setting'
 import Schedule from './components/Schedule'
 import PDFViewer from './components/PDFViewer'
-import { fetchApiToken, fetchMessage } from './data'
+import { findWorkspace, fetchWorkspaceToken, findChannel, fetchMessage } from './data'
 import './main.css'
-
-/* development flag */
-const dev = process.env.REACT_APP_DEV === 'true'
-console.log('dev mode', dev)
 
 const App = () => {
     const [modalOpen, setModalOpen] = useState(false)
@@ -21,31 +18,31 @@ const App = () => {
         data: [],
     })
 
-    useEffect(() => {
-        const doFetch = async () => {
-            setFetchData(state => ({
-                ...state,
-                isLoading: true,
-            }))
-            const isLogin = await fetchApiToken(dev)
-            if (!isLogin) {
-                return setFetchData(state => ({
-                    ...state,
-                    isLoading: false,
-                    error: 'invalid_auth',
-                }))
-            }
+    // useEffect(() => {
+    //     const doFetch = async () => {
+    //         setFetchData(state => ({
+    //             ...state,
+    //             isLoading: true,
+    //         }))
+    //         const isLogin = await fetchWorkspaceToken()
+    //         if (!isLogin) {
+    //             return setFetchData(state => ({
+    //                 ...state,
+    //                 isLoading: false,
+    //                 error: 'invalid_auth',
+    //             }))
+    //         }
 
-            const [data, error] = await fetchMessage(dev)
-            setFetchData(state => ({
-                ...state,
-                isLoading: false,
-                data,
-                error,
-            }))
-        }
-        doFetch()
-    }, [])
+    //         const [data, error] = await fetchMessage()
+    //         setFetchData(state => ({
+    //             ...state,
+    //             isLoading: false,
+    //             data,
+    //             error,
+    //         }))
+    //     }
+    //     doFetch()
+    // }, [])
 
     const openModal = pdf => {
         setPdf(pdf)
@@ -57,6 +54,7 @@ const App = () => {
     return (
         <Worker workerUrl='./pdf.worker.min.js'>
             <main>
+                <Setting />
                 {isLoading && <Loading />}
                 {!!error && <Error message={error} />}
                 {!error && (

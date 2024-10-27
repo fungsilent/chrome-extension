@@ -4,7 +4,7 @@ import PDFIcon from './PDFIcon'
 const Schedule = ({ data, openModal }) => {
     console.log('data', data)
     return (
-        <section className='Schedule'>
+        <section className='schedule'>
             {data.map((weekData, weekIndex) => (
                 <div
                     key={weekIndex}
