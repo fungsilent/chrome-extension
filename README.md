@@ -1,32 +1,10 @@
-# Development
+# Weekly-schedule
 
-`npm start`
-
-### Chrome
-
-Due to the CORS (Cross-Origin Resource Sharing) policy, it is necessary to use a fully disabled CORS Chrome for testing and development.\
-Open Chrome with
-
-#### Windows:
-
-> [!NOTE]
-> CMD not PowerShell
-
-```cmd
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir="C:\temp\chrome"
-```
-
-#### macOS:
-
-```bash
-open -a "Google Chrome" --args --disable-web-security --user-data-dir="/tmp/chrome"
-```
-
-# Production
-
-`npm run build`
+Due to the CORS (Cross-Origin Resource Sharing) policy, development and testing are only permitted in a Chrome extension environment.\
 
 ### Install
+
+`npm run build`
 
 Load unpacked extension in chrome and select the `build` directory
 
@@ -46,6 +24,16 @@ weekly-schedule
 |-- README.md
 |-- ...
 ```
+
+### Development
+
+1. Install in chrome first
+2. Open url\
+   replace {extension-id} to your chrome extension ID
+    > chrome-extension://{extension-id}/index.html
+
+> [!NOTE]
+> You can also disable the relevant APIs and run UI development locally using `npm start`
 
 # git cheat sheet
 
