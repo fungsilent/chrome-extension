@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import ReactSelect from 'react-select'
-import Loader from './Loader'
-import { findWorkspace, fetchWorkspaceToken, findChannel, fetchMessage } from '../data'
-import useFetch from '../hooks/useFetch'
-import config from '../config'
+import Loader from 'components/Loader'
+import { findWorkspace, fetchWorkspaceToken, findChannel } from 'data'
+import useFetch from 'hooks/useFetch'
+import { getSetting, setSetting } from 'utils'
 
-const { env } = config
 // const testData = {
 //     workspaces: [
 //         {
@@ -38,7 +37,7 @@ const { env } = config
 // }
 // const { workspaces, channels } = testData
 
-const Setting = () => {
+const PageSetting = () => {
     const [setting, _setState] = useState(getSetting())
     const [dispatchWorkspace, workspaces = [], loadWorkspaces, workspacesError] = useFetch('workspaces', [])
     const [dispatchToken, workspaceToken = '', loadToken, tokenError] = useFetch('token', '')
@@ -104,6 +103,7 @@ const Setting = () => {
 
     return (
         <section className='setting'>
+            <div className='back'></div>
             <div className='container'>
                 <div className='box'>
                     <p>Workspace</p>
@@ -143,27 +143,6 @@ const Setting = () => {
     )
 }
 
-function getSetting() {
-    const workspace = JSON.parse(localStorage.getItem(env.workspace))
-    return {
-        workspace: workspace?.id,
-        workspaceUrl: workspace?.url,
-        channel: localStorage.getItem(env.workspaceChannel),
-    }
-}
-
-function setSetting({ workspace, workspaceUrl, token, channel }) {
-    localStorage.setItem(
-        env.workspace,
-        JSON.stringify({
-            id: workspace,
-            url: workspaceUrl,
-        })
-    )
-    localStorage.setItem(env.workspaceToken, token)
-    localStorage.setItem(env.workspaceChannel, channel)
-}
-
 /* Select */
 const Select = props => {
     return (
@@ -192,7 +171,7 @@ const Select = props => {
                     ...styles,
                     backgroundColor: '#283618',
                     padding: '0 10px',
-                    transition: '0.3s',
+                    cursor: 'pointer',
                 }),
                 menu: styles => ({
                     ...styles,
@@ -232,4 +211,4 @@ const Select = props => {
     )
 }
 
-export default Setting
+export default PageSetting

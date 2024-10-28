@@ -1,6 +1,6 @@
 import axios from 'axios'
-import testJson from './data.test.json'
-import config from './config'
+import testJson from 'data.test.json'
+import config from 'config'
 
 /*
  * Config
@@ -83,32 +83,21 @@ export const findChannel = async workspaceToken => {
     }
 }
 
-export const fetchMessage = async (development = false) => {
-    if (development) {
-        // return [null, 'invalid_auth']
-        // return [null, 'unkonwn']
-        return [formatMessage(dev.messages), null]
-    }
+export const fetchMessage = async () => {
     try {
-        const formData = new FormData()
-        formData.append(env.workspaceToken, localStorage.getItem(env.workspaceToken))
-        formData.append(env.workspaceChannel, localStorage.getItem(env.workspaceChannel))
-
-        let response = await fetch(api.fetchHistory, {
+        const response = await fetchData(api.fetchHistory, {
             method: 'POST',
             credentials: 'include',
-            body: formData,
+            data: createFormData({
+                [env.workspaceToken]: localStorage.getItem(env.workspaceToken),
+                [env.workspaceChannel]: localStorage.getItem(env.workspaceChannel),
+            }),
         })
-        response = await response.json()
 
-        if (!response.ok) {
-            throw new Error(response.error)
-        }
-
-        return [formatMessage(response.history.messages), null]
+        return formatMessage(response.messages)
     } catch (err) {
         console.log(`[ERROR] fetchMessage:`, err.message)
-        return [null, err.message]
+        return null
     }
 }
 

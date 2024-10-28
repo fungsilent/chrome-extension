@@ -1,4 +1,4 @@
-const Error = ({ message }) => {
+const Error = ({ error, resetErrorBoundary }) => {
     const renderRequireAuth = () => {
         return (
             <div className='error error-auth'>
@@ -17,11 +17,7 @@ const Error = ({ message }) => {
         )
     }
 
-    return (
-        <section className='section-error'>
-            {message === 'invalid_auth' ? renderRequireAuth() : renderUnknown()}
-        </section>
-    )
+    return <section className='section-error'>{error.message === 'invalid_auth' ? renderRequireAuth() : renderUnknown()}</section>
 }
 
 export default Error

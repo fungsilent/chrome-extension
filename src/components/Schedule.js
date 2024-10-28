@@ -1,8 +1,7 @@
 import moment from 'moment'
-import PDFIcon from './PDFIcon'
+import PDFIcon from 'components/PDFIcon'
 
 const Schedule = ({ data, openModal }) => {
-    console.log('data', data)
     return (
         <section className='schedule'>
             {data.map((weekData, weekIndex) => (
