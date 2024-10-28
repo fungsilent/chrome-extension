@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { MemoryRouter as Router } from 'react-router'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import PageSchedule from 'pages/Schedule'
@@ -15,7 +14,7 @@ const App = () => {
     /* Render */
     return (
         <main>
-            <ErrorBoundary fallback={Error}>
+            <ErrorBoundary FallbackComponent={Error}>
                 {!hasSetting && <Setting />}
                 {hasSetting && <PageSchedule workspaceUrl={workspaceUrl} />}
             </ErrorBoundary>

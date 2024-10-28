@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import { useErrorBoundary } from 'react-error-boundary'
 import ReactSelect from 'react-select'
 import Loader from 'components/Loader'
 import { findWorkspace, fetchWorkspaceToken, findChannel } from 'data'
@@ -38,12 +39,16 @@ import { getSetting, setSetting } from 'utils'
 // const { workspaces, channels } = testData
 
 const PageSetting = () => {
+    const { showBoundary } = useErrorBoundary()
+    const inputRef = useRef(null)
     const [setting, _setState] = useState(getSetting())
     const [dispatchWorkspace, workspaces = [], loadWorkspaces, workspacesError] = useFetch('workspaces', [])
     const [dispatchToken, workspaceToken = '', loadToken, tokenError] = useFetch('token', '')
     const [dispatchChannel, channels = [], loadChannels, channelsError] = useFetch('channels', [])
 
-    // console.log('>>>>>>>>>>>>>>> setting', setting)
+    // if (workspacesError || tokenError || channelsError) {
+    //     showBoundary(workspacesError || tokenError || channelsError)
+    // }
 
     const setState = update => {
         _setState(state => ({ ...state, ...update }))
@@ -76,14 +81,18 @@ const PageSetting = () => {
     }, [workspaceToken])
 
     /* Event */
-    const onSelectWorkspace = workspace => {
-        if (workspace.value !== setting.workspace) {
-            setState({ channel: '' })
-        }
-        setState({
-            workspace: workspace.id,
-            workspaceUrl: workspace.url,
-        })
+    // const onSelectWorkspace = workspace => {
+    //     if (workspace.value !== setting.workspace) {
+    //         setState({ channel: '' })
+    //     }
+    //     setState({
+    //         workspace: workspace.id,
+    //         workspaceUrl: workspace.url,
+    //     })
+    // }
+    const onFetchChannels = () => {
+        console.log(inputRef.current.value)
+        setState({ workspaceUrl: inputRef.current.value })
     }
 
     const onSelectChannel = channel => {
@@ -98,14 +107,14 @@ const PageSetting = () => {
     }
 
     /* Render */
-    const workspaceValue = workspaces.find(item => item.id === setting.workspace) ?? null
+    // const workspaceValue = workspaces.find(item => item.id === setting.workspace) ?? null
     const channelValue = channels.find(item => item.id === setting.channel) ?? null
 
     return (
         <section className='setting'>
             <div className='back'></div>
             <div className='container'>
-                <div className='box'>
+                {/* <div className='box'>
                     <p>Workspace</p>
                     <Select
                         className='select select-workspace'
@@ -117,6 +126,23 @@ const PageSetting = () => {
                         isLoading={loadWorkspaces}
                         isDisabled={loadWorkspaces}
                     />
+                </div> */}
+                <div className='box'>
+                    <p>Workspace URL</p>
+                    <p className='sub'>e.g. juniorfullsta-ka69329.slack.com</p>
+                    <div className='input'>
+                        <input
+                            name='workspace'
+                            type='text'
+                            ref={inputRef}
+                        />
+                        <span
+                            className='button'
+                            onClick={onFetchChannels}
+                        >
+                            Fetch Channels
+                        </span>
+                    </div>
                 </div>
                 <div className='box'>
                     <p>Channel</p>
@@ -165,7 +191,7 @@ const Select = props => {
                 }),
                 valueContainer: styles => ({
                     ...styles,
-                    padding: '0 12px',
+                    padding: 12,
                 }),
                 indicatorsContainer: (styles, state) => ({
                     ...styles,

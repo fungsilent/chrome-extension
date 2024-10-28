@@ -172,6 +172,31 @@ main {
     flex-direction: column;
     gap: 8px;
 }
+.setting .sub {
+    font-size: 0.8rem;
+    color: #765333;
+}
+.setting .input {
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.setting .input input {
+    flex: 1;
+    background-color: #606C38;
+    color: #FEFAE0;
+    padding: 12px;
+    outline: none;
+    border: none;
+}
+.setting .input .button {
+    display: flex;
+    align-items: center;
+    background-color: #283618;
+    padding: 0 10px;
+    color: #FEFAE0;
+    cursor: pointer;
+}
 .setting .save {
     align-self: flex-end;
     background-color: #606c38;
