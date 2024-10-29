@@ -39,10 +39,11 @@ import { getSetting, setSetting } from 'utils'
 // const { workspaces, channels } = testData
 
 const PageSetting = () => {
+    console.log('PageSetting')
     const { showBoundary } = useErrorBoundary()
     const inputRef = useRef(null)
     const [setting, _setState] = useState(getSetting())
-    const [dispatchWorkspace, workspaces = [], loadWorkspaces, workspacesError] = useFetch('workspaces', [])
+    // const [dispatchWorkspace, workspaces = [], loadWorkspaces, workspacesError] = useFetch('workspaces', [])
     const [dispatchToken, workspaceToken = '', loadToken, tokenError] = useFetch('token', '')
     const [dispatchChannel, channels = [], loadChannels, channelsError] = useFetch('channels', [])
 
@@ -54,25 +55,25 @@ const PageSetting = () => {
         _setState(state => ({ ...state, ...update }))
     }
 
-    useEffect(() => {
-        dispatchWorkspace(findWorkspace)
-    }, [])
+    // useEffect(() => {
+    //     dispatchWorkspace(findWorkspace)
+    // }, [])
 
-    useEffect(() => {
-        const selected = workspaces.find(ws => ws.id === setting.workspace)
-        if (selected) {
-            setState({
-                workspace: selected?.id,
-                workspaceUrl: selected?.url,
-            })
-        }
-    }, [workspaces])
+    // useEffect(() => {
+    //     const selected = workspaces.find(ws => ws.id === setting.workspace)
+    //     if (selected) {
+    //         setState({
+    //             workspace: selected?.id,
+    //             workspaceUrl: selected?.url,
+    //         })
+    //     }
+    // }, [workspaces])
 
-    useEffect(() => {
-        if (setting.workspace) {
-            dispatchToken(() => fetchWorkspaceToken(setting.workspaceUrl))
-        }
-    }, [setting.workspace])
+    // useEffect(() => {
+    //     if (setting.workspaceUrl) {
+    //         dispatchToken(() => fetchWorkspaceToken(setting.workspaceUrl))
+    //     }
+    // }, [setting.workspaceUrl])
 
     useEffect(() => {
         if (workspaceToken) {
@@ -91,8 +92,9 @@ const PageSetting = () => {
     //     })
     // }
     const onFetchChannels = () => {
-        console.log(inputRef.current.value)
-        setState({ workspaceUrl: inputRef.current.value })
+        const workspace = inputRef.current.value.trim()
+        setState({ workspace })
+        dispatchToken(() => fetchWorkspaceToken(workspace))
     }
 
     const onSelectChannel = channel => {

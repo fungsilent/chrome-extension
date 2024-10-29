@@ -7,8 +7,10 @@ import Loading from 'pages/Loading'
 import Schedule from 'components/Schedule'
 import PDFViewer from 'components/PDFViewer'
 import { fetchWorkspaceToken, fetchMessage } from 'data'
+import { getSetting } from 'utils'
 
-const PageSchedule = ({ workspaceUrl }) => {
+const PageSchedule = () => {
+    console.log('PageSchedule')
     const { showBoundary } = useErrorBoundary()
     const [dispatchToken, workspaceToken, loadToken, tokenError] = useFetch('token', '')
     const [dispatchMessage, messages, loadMessages, messagesError] = useFetch('message', null)
@@ -20,7 +22,8 @@ const PageSchedule = ({ workspaceUrl }) => {
     }
 
     useEffect(() => {
-        dispatchToken(() => fetchWorkspaceToken(workspaceUrl))
+        const { workspace } = getSetting()
+        dispatchToken(() => fetchWorkspaceToken(workspace))
     }, [])
 
     useEffect(() => {

@@ -3,26 +3,14 @@ import config from 'config'
 const { env } = config
 
 export const getSetting = () => {
-    try {
-        const workspace = JSON.parse(localStorage.getItem(env.workspace))
-        return {
-            workspace: workspace?.id,
-            workspaceUrl: workspace?.url,
-            channel: localStorage.getItem(env.workspaceChannel),
-        }
-    } catch (err) {
-        return {}
+    return {
+        workspace: localStorage.getItem(env.workspace),
+        channel: localStorage.getItem(env.workspaceChannel),
     }
 }
 
-export const setSetting = ({ workspace, workspaceUrl, token, channel }) => {
-    localStorage.setItem(
-        env.workspace,
-        JSON.stringify({
-            id: workspace,
-            url: workspaceUrl,
-        })
-    )
+export const setSetting = ({ workspace, token, channel }) => {
+    localStorage.setItem(env.workspace, workspace)
     localStorage.setItem(env.workspaceToken, token)
     localStorage.setItem(env.workspaceChannel, channel)
 }

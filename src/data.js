@@ -40,9 +40,9 @@ export const findWorkspace = async () => {
     }
 }
 
-export const fetchWorkspaceToken = async url => {
+export const fetchWorkspaceToken = async workspace => {
     try {
-        const response = await fetch(url, {
+        const response = await fetch(api.findWorkspaceToken.replace('{workspace}', workspace), {
             credentials: 'include',
         })
 

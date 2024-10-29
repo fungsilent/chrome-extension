@@ -14,7 +14,8 @@ config = {
     ...config,
     api: {
         ...config.api,
-        findWorkspace: `${config.api.base}/signin.findWorkspaces`,
+        findWorkspaceToken: 'https://{workspace}/ssb/redirect',
+        // findWorkspace: `${config.api.base}/signin.findWorkspaces`,
         findChannel: `${config.api.base}/conversations.list`,
         fetchHistory: `${config.api.base}/conversations.history`,
     },

@@ -60,7 +60,7 @@ const PDFViewer = ({ pdf, modalOpen, closeModal }) => {
             </div>
             <Viewer
                 fileUrl={pdf}
-                defaultScale={1.3}
+                defaultScale={2}
                 plugins={[toolbarPluginInstance]}
             />
         </Modal>
