@@ -38,18 +38,30 @@ main {
     background-color: #283618;
     color: #fefae0;
     display: flex;
-    justify-content: flex-end;
-    padding: 4px 8px;
+    justify-content: space-between;
+    align-items: center;
+}
+.header .title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 0 12px;
 }
 .header .button {
     font-weight: bold;
     color: #fefae0;
     cursor: pointer;
-}
-.header i,
-.header p {
+    height: 36px;
     display: flex;
-    padding: 4px;
+    align-items: center;
+    padding: 0 12px;
+    transition: 0.3s;
+}
+.header .button:hover {
+    background-color: #606c38;
+}
+.header i {
+    display: flex;
+    width: 28px;
     height: 28px;
 }
 

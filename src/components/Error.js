@@ -1,6 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const Error = ({ error, resetErrorBoundary }) => {
+    console.log('[Error]', error, error.message)
     const navigate = useNavigate()
 
     const goSetting = () => {

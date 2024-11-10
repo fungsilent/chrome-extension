@@ -65,7 +65,7 @@ const PageSetting = () => {
                             className='button'
                             onClick={onFetchChannels}
                         >
-                            Fetch Channels
+                            Search Channels
                         </span>
                     </div>
                 </div>

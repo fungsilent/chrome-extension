@@ -28,10 +28,10 @@ export const findWorkspace = async () => {
             return result
         }, [])
 
-        return workspaces
+        return [workspaces, null]
     } catch (err) {
         console.log(`[ERROR] findWorkspace:`, err)
-        return null
+        return [null, err.message]
     }
 }
 
@@ -41,15 +41,18 @@ export const fetchWorkspaceToken = async workspace => {
             credentials: 'include',
         })
 
+        if (response.url.search(/\?redir=/) > -1) {
+            return [null, 'invalid_auth']
+        }
+
         const html = await response.text()
         const [, token] = html.match(/"api_token":"([a-z0-9-]*)/)
-
         localStorage.setItem(env.workspaceToken, token)
 
-        return token
+        return [token, null]
     } catch (err) {
-        console.log(`[ERROR] fetchWorkspaceToken:`, err.message)
-        return null
+        console.log(`[ERROR] fetchWorkspaceToken:`, err)
+        return [null, err.message]
     }
 }
 
@@ -63,16 +66,16 @@ export const findChannel = async workspaceToken => {
                 types: 'public_channel,private_channel',
             }),
         })
-
+        console.log(response)
         const channels = response.channels.map(channel => ({
             id: channel.id,
             name: channel.name,
         }))
 
-        return channels
+        return [channels, null]
     } catch (err) {
         console.log(`[ERROR] findChannel:`, err.message)
-        return null
+        return [null, err.message]
     }
 }
 
@@ -87,10 +90,10 @@ export const fetchMessage = async () => {
             }),
         })
 
-        return formatMessage(response.messages)
+        return [formatMessage(response.messages), null]
     } catch (err) {
         console.log(`[ERROR] fetchMessage:`, err.message)
-        return null
+        return [null, err.message]
     }
 }
 

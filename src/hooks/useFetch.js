@@ -49,11 +49,11 @@ const useFetch = name => {
 
     const dispatchFetch = async fetchFunc => {
         dispatch(STATUS.loading)
-        const data = await fetchFunc()
+        const [data, error] = await fetchFunc()
         if (data) {
             dispatch(STATUS.success, data)
         } else {
-            dispatch(STATUS.fail, 'Fetch Error')
+            dispatch(STATUS.fail, error)
         }
     }
 
