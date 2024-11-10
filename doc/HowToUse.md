@@ -6,6 +6,6 @@
 
 ## 2. Setup the config
 
-![](doc/setting_step_1.jpg)
-![](doc/setting_step_2.jpg)
-![](doc/setting_step_3.jpg)
+![](setting_step_1.jpg)
+![](setting_step_2.jpg)
+![](setting_step_3.jpg)
