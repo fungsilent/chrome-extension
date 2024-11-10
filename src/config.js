@@ -1,5 +1,4 @@
 let config = {
-    dev: process.env.REACT_APP_ENV === 'development',
     api: {
         base: 'https://slack.com/api',
     },
@@ -15,7 +14,6 @@ config = {
     api: {
         ...config.api,
         findWorkspaceToken: 'https://{workspace}/ssb/redirect',
-        // findWorkspace: `${config.api.base}/signin.findWorkspaces`,
         findChannel: `${config.api.base}/conversations.list`,
         fetchHistory: `${config.api.base}/conversations.history`,
     },

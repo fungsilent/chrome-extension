@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { MemoryRouter, Routes, Route } from 'react-router-dom'
 
+import Layout from 'pages/Layout'
 import PageLanding from 'pages/Landing'
 import PageSchedule from 'pages/Schedule'
 import PageSetting from 'pages/Setting'
@@ -12,22 +12,31 @@ const App = () => {
     /* Render */
     return (
         <main>
-            <ErrorBoundary FallbackComponent={Error}>
-                <Routes>
-                    <Route
-                        path='/'
-                        element={<PageLanding />}
-                    />
-                    <Route
-                        path='/setting'
-                        element={<PageSetting />}
-                    />
-                    <Route
-                        path='/schedule'
-                        element={<PageSchedule />}
-                    />
-                </Routes>
-            </ErrorBoundary>
+            <MemoryRouter>
+                <ErrorBoundary FallbackComponent={Error}>
+                    <Routes>
+                        <Route
+                            path='/'
+                            element={<Layout />}
+                        >
+                            <Route
+                                index
+                                element={<PageLanding />}
+                                errorElement={<Error />}
+                            />
+                            <Route
+                                path='/setting'
+                                element={<PageSetting />}
+                            />
+                            <Route
+                                path='/schedule'
+                                element={<PageSchedule />}
+                                errorElement={<Error />}
+                            />
+                        </Route>
+                    </Routes>
+                </ErrorBoundary>
+            </MemoryRouter>
         </main>
     )
 }

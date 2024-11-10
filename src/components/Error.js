@@ -1,4 +1,13 @@
+import { Link, useNavigate } from 'react-router-dom'
+
 const Error = ({ error, resetErrorBoundary }) => {
+    const navigate = useNavigate()
+
+    const goSetting = () => {
+        navigate('/setting')
+        resetErrorBoundary()
+    }
+
     const renderRequireAuth = () => {
         return (
             <div className='error error-auth'>
@@ -13,11 +22,21 @@ const Error = ({ error, resetErrorBoundary }) => {
         return (
             <div className='error error-unknown'>
                 <span>發生未知錯誤</span>
+                <span
+                    className='check-setting'
+                    onClick={goSetting}
+                >
+                    檢查設定
+                </span>
             </div>
         )
     }
 
-    return <section className='section-error'>{error.message === 'invalid_auth' ? renderRequireAuth() : renderUnknown()}</section>
+    return (
+        <section className='section-error'>
+            {error.message === 'invalid_auth' ? renderRequireAuth() : renderUnknown()}
+        </section>
+    )
 }
 
 export default Error

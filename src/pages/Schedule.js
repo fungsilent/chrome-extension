@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Worker } from '@react-pdf-viewer/core'
-import { useErrorBoundary } from 'react-error-boundary'
 
 import useFetch from 'hooks/useFetch'
 import Loading from 'pages/Loading'
@@ -10,15 +9,13 @@ import { fetchWorkspaceToken, fetchMessage } from 'data'
 import { getSetting } from 'utils'
 
 const PageSchedule = () => {
-    console.log('PageSchedule')
-    const { showBoundary } = useErrorBoundary()
-    const [dispatchToken, workspaceToken, loadToken, tokenError] = useFetch('token', '')
-    const [dispatchMessage, messages, loadMessages, messagesError] = useFetch('message', null)
+    const [dispatchToken, workspaceToken = '', loadToken, tokenError] = useFetch('token')
+    const [dispatchMessage, messages = null, loadMessages, messagesError] = useFetch('message')
     const [modalOpen, setModalOpen] = useState(false)
     const [pdf, setPdf] = useState('')
 
     if (tokenError || messagesError) {
-        showBoundary(tokenError || messagesError)
+        throw new Error(tokenError || messagesError)
     }
 
     useEffect(() => {

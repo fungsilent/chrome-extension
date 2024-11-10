@@ -36,10 +36,10 @@ const reducer = (state, { type, payload }) => {
     }
 }
 
-const useFetch = (name, idleData) => {
+const useFetch = name => {
     const [_state, _dispatch] = useReducer(reducer, {
         status: STATUS.idle,
-        data: idleData,
+        data: undefined,
         error: '',
     })
 
@@ -59,7 +59,7 @@ const useFetch = (name, idleData) => {
 
     const state = [
         // data
-        _state.status === STATUS.success ? _state.data : idleData,
+        _state.status === STATUS.success ? _state.data : undefined,
         // isLoading
         _state.status === STATUS.loading,
         // error

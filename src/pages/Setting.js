@@ -1,79 +1,22 @@
-import { useRef, useState, useEffect } from 'react'
-import { useErrorBoundary } from 'react-error-boundary'
+import { useState, useEffect } from 'react'
 import ReactSelect from 'react-select'
 import Loader from 'components/Loader'
-import { findWorkspace, fetchWorkspaceToken, findChannel } from 'data'
+import { fetchWorkspaceToken, findChannel } from 'data'
 import useFetch from 'hooks/useFetch'
 import { getSetting, setSetting } from 'utils'
 
-// const testData = {
-//     workspaces: [
-//         {
-//             domain: 'juniorfullsta-ka69329',
-//             id: 'T07K4E7N8AG',
-//             name: 'Junior Full Stack Developer Program Cohort 12',
-//             url: 'https://juniorfullsta-ka69329.slack.com/ssb/redirect',
-//         },
-//         {
-//             domain: 'test-pqy3056',
-//             id: 'T07UA8CR6SC',
-//             name: 'Test',
-//             url: 'https://test-pqy3056.slack.com/ssb/redirect',
-//         },
-//     ],
-//     channels: [
-//         {
-//             id: 'C07JZ4B6677',
-//             name: 'weekly-shcedule',
-//         },
-//         {
-//             id: 'C07KAC296T0',
-//             name: 'tech',
-//         },
-//         {
-//             id: 'C07K1S46LEP',
-//             name: 'general',
-//         },
-//     ],
-// }
-// const { workspaces, channels } = testData
-
 const PageSetting = () => {
-    console.log('PageSetting')
-    const { showBoundary } = useErrorBoundary()
-    const inputRef = useRef(null)
     const [setting, _setState] = useState(getSetting())
-    // const [dispatchWorkspace, workspaces = [], loadWorkspaces, workspacesError] = useFetch('workspaces', [])
-    const [dispatchToken, workspaceToken = '', loadToken, tokenError] = useFetch('token', '')
-    const [dispatchChannel, channels = [], loadChannels, channelsError] = useFetch('channels', [])
+    const [dispatchToken, workspaceToken = '', loadToken, tokenError] = useFetch('token')
+    const [dispatchChannel, channels = [], loadChannels, channelsError] = useFetch('channels')
 
-    // if (workspacesError || tokenError || channelsError) {
-    //     showBoundary(workspacesError || tokenError || channelsError)
-    // }
+    if (tokenError || channelsError) {
+        throw new Error(tokenError || channelsError)
+    }
 
     const setState = update => {
         _setState(state => ({ ...state, ...update }))
     }
-
-    // useEffect(() => {
-    //     dispatchWorkspace(findWorkspace)
-    // }, [])
-
-    // useEffect(() => {
-    //     const selected = workspaces.find(ws => ws.id === setting.workspace)
-    //     if (selected) {
-    //         setState({
-    //             workspace: selected?.id,
-    //             workspaceUrl: selected?.url,
-    //         })
-    //     }
-    // }, [workspaces])
-
-    // useEffect(() => {
-    //     if (setting.workspaceUrl) {
-    //         dispatchToken(() => fetchWorkspaceToken(setting.workspaceUrl))
-    //     }
-    // }, [setting.workspaceUrl])
 
     useEffect(() => {
         if (workspaceToken) {
@@ -82,19 +25,12 @@ const PageSetting = () => {
     }, [workspaceToken])
 
     /* Event */
-    // const onSelectWorkspace = workspace => {
-    //     if (workspace.value !== setting.workspace) {
-    //         setState({ channel: '' })
-    //     }
-    //     setState({
-    //         workspace: workspace.id,
-    //         workspaceUrl: workspace.url,
-    //     })
-    // }
+    const onWorkspaceChange = event => {
+        setState({ workspace: event.target.value.trim() })
+    }
+
     const onFetchChannels = () => {
-        const workspace = inputRef.current.value.trim()
-        setState({ workspace })
-        dispatchToken(() => fetchWorkspaceToken(workspace))
+        dispatchToken(() => fetchWorkspaceToken(setting.workspace))
     }
 
     const onSelectChannel = channel => {
@@ -109,26 +45,12 @@ const PageSetting = () => {
     }
 
     /* Render */
-    // const workspaceValue = workspaces.find(item => item.id === setting.workspace) ?? null
     const channelValue = channels.find(item => item.id === setting.channel) ?? null
 
     return (
         <section className='setting'>
             <div className='back'></div>
             <div className='container'>
-                {/* <div className='box'>
-                    <p>Workspace</p>
-                    <Select
-                        className='select select-workspace'
-                        placeholder='Select Workspace'
-                        value={workspaceValue}
-                        options={workspaces}
-                        onChange={onSelectWorkspace}
-                        noOptionsMessage={() => 'No Workspaces'}
-                        isLoading={loadWorkspaces}
-                        isDisabled={loadWorkspaces}
-                    />
-                </div> */}
                 <div className='box'>
                     <p>Workspace URL</p>
                     <p className='sub'>e.g. juniorfullsta-ka69329.slack.com</p>
@@ -136,7 +58,8 @@ const PageSetting = () => {
                         <input
                             name='workspace'
                             type='text'
-                            ref={inputRef}
+                            value={setting.workspace}
+                            onChange={onWorkspaceChange}
                         />
                         <span
                             className='button'
@@ -158,14 +81,12 @@ const PageSetting = () => {
                         isLoading={loadToken || loadChannels}
                         isDisabled={loadToken || loadChannels}
                     />
+                    <p className='sub'>
+                        Current <strong>Channel ID:</strong> {setting.channel}
+                    </p>
                 </div>
 
-                <div
-                    className='save'
-                    onClick={saveSetting}
-                >
-                    Save
-                </div>
+                <SaveButton onSave={saveSetting} />
             </div>
         </section>
     )
@@ -236,6 +157,38 @@ const Select = props => {
             }}
             {...props}
         />
+    )
+}
+
+const SaveButton = ({ onSave }) => {
+    const [showSuccess, setShowSuccess] = useState(false)
+
+    const onClick = () => {
+        onSave()
+        setShowSuccess(true)
+    }
+
+    useEffect(() => {
+        if (!showSuccess) return
+
+        const showMessage = setTimeout(() => {
+            setShowSuccess(false)
+        }, 1000)
+        return () => {
+            clearTimeout(showMessage)
+        }
+    }, [showSuccess])
+
+    return (
+        <div className='save'>
+            {showSuccess && <p className='success'>Saved!</p>}
+            <div
+                className='button'
+                onClick={onClick}
+            >
+                Save
+            </div>
+        </div>
     )
 }
 

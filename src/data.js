@@ -1,5 +1,4 @@
 import axios from 'axios'
-import testJson from 'data.test.json'
 import config from 'config'
 
 /*
@@ -7,10 +6,6 @@ import config from 'config'
  */
 const { api, env } = config
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-
-const dev = {
-    messages: testJson.history.messages,
-}
 
 /*
  * Fetch function
@@ -49,8 +44,7 @@ export const fetchWorkspaceToken = async workspace => {
         const html = await response.text()
         const [, token] = html.match(/"api_token":"([a-z0-9-]*)/)
 
-        // localStorage.setItem(env.workspaceToken, token)
-        // localStorage.setItem(env.WORKSPACE_CHANNEL_KEY, env.WORKSPACE_CHANNEL_VALUE)
+        localStorage.setItem(env.workspaceToken, token)
 
         return token
     } catch (err) {
@@ -65,7 +59,6 @@ export const findChannel = async workspaceToken => {
             method: 'POST',
             credentials: 'include',
             data: createFormData({
-                // [env.workspaceToken]: localStorage.getItem(env.workspaceToken),
                 [env.workspaceToken]: workspaceToken,
                 types: 'public_channel,private_channel',
             }),
@@ -104,7 +97,7 @@ export const fetchMessage = async () => {
 const formatMessage = messages => {
     const filteredData = messages.filter(message => message.files?.[0].filetype === 'pdf')
     const schedules = filteredData.map(item => {
-        const texts = item.blocks[0].elements[0].elements
+        const texts = item.text.replaceAll(/<https:\/\/(.+)>/g, '*$&*').split('*')
         const schedule = formatWeekSchedule(texts)
         return {
             ...schedule,
@@ -142,7 +135,7 @@ const formatWeekSchedule = elements => {
     let timeFlag = ''
 
     elements.forEach((elem, index) => {
-        elem.text.split('\n').forEach(exactElem => {
+        elem.split('\n').forEach(exactElem => {
             // dont ask why need forEach, slack is suck
             try {
                 const text = exactElem
@@ -182,11 +175,13 @@ const formatWeekSchedule = elements => {
 
                 // teams link url
                 if (text.search('https://') > -1) {
+                    const link = text.replaceAll(/<|>/g, '').split('|')
                     data.schedule[dateFlag] = {
                         ...data.schedule[dateFlag],
                         [timeFlag]: {
                             ...data.schedule[dateFlag][timeFlag],
-                            link: elem.url,
+                            // link: elem.url,
+                            link: link[0],
                         },
                     }
                     return
