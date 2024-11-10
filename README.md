@@ -35,6 +35,10 @@ weekly-schedule
 > [!NOTE]
 > You can also disable the relevant APIs and run UI development locally using `npm start`
 
+# How to find your slack workspace URL?
+
+![](doc/find_url.jpg)
+
 # git cheat sheet
 
 1. `git pull --rebase upstream main`
