@@ -1,5 +1,5 @@
 {
-    "version": "1.1.1",
+    "version": "2.0.0",
     "manifest_version": 3,
     "name": "Weekly Schedule",
     "description": "Prettier weekly schedule from slack",
@@ -13,10 +13,6 @@
         "48": "icon.png",
         "128": "icon.png"
     },
-    "host_permissions":[
-        "<all_urls>"
-    ],
-    "permissions": [
-        "cookies"
-    ]
+    "host_permissions": ["<all_urls>"],
+    "permissions": ["cookies"]
 }
