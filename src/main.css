@@ -104,11 +104,14 @@ main {
     aspect-ratio: 1/1;
 }
 .days {
+    --colNum: 0;
     width: 100%;
     padding: 16px;
     background-color: #fefae0;
     display: grid;
-    grid-template: repeat(3, auto) / repeat(5, 1fr);
+    /* grid-template: repeat(3, auto) / repeat(5, 1fr); */
+    grid-template-rows: repeat(3, auto);
+    grid-template-columns: repeat(var(--colNum), calc((100% - 32px) / 5));
     gap: 12px 8px;
 }
 .days .class {

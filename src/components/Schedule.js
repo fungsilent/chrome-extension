@@ -16,11 +16,17 @@ const Schedule = ({ data, openModal }) => {
                     >
                         <PDFIcon />
                     </div>
-                    <div className='days'>
+                    <div
+                        className='days'
+                        style={{
+                            '--colNum': weekData.schedule.length,
+                        }}
+                    >
                         {weekData.schedule.map((dayData, dayIndex) => (
                             <Day
                                 key={dayIndex}
                                 baseOrder={dayIndex}
+                                dayCount={weekData.schedule.length}
                                 {...dayData}
                             />
                         ))}
@@ -33,7 +39,7 @@ const Schedule = ({ data, openModal }) => {
 
 const Day = props => {
     // console.log('Day', props)
-    const { baseOrder, date, day, month, holiday, am, pm, both } = props
+    const { baseOrder, dayCount, date, day, month, holiday, am, pm, both } = props
 
     // calculate is today
     const today = moment()
@@ -80,14 +86,14 @@ const Day = props => {
         switch (type) {
             case 'both': {
                 style = {
-                    order: baseOrder + 5,
+                    order: baseOrder + dayCount,
                     gridRow: 'span 2',
                 }
                 break
             }
             case 'am': {
                 style = {
-                    order: baseOrder + 5,
+                    order: baseOrder + dayCount,
                 }
                 data = {
                     ...data,
@@ -97,7 +103,7 @@ const Day = props => {
             }
             case 'pm': {
                 style = {
-                    order: baseOrder + 10,
+                    order: baseOrder + dayCount * 2,
                 }
                 data = {
                     ...data,
@@ -120,12 +126,19 @@ const Day = props => {
     const renderHoliday = () => (
         <div
             className={`class holiday`}
-            style={{ order: baseOrder + 5, gridRow: 'span 2' }}
+            style={{ order: baseOrder + dayCount, gridRow: 'span 2' }}
         >
             <p className='title'>Holiday</p>
         </div>
     )
 
+    const renderNoData = () => (
+        <div
+            className={`no-class`}
+            style={{ order: baseOrder + dayCount, gridRow: 'span 2' }}
+        ></div>
+    )
+    console.log(props)
     return (
         <>
             <div
@@ -138,6 +151,7 @@ const Day = props => {
             {!!pm && renderInfo('pm', pm)}
             {!!both && renderInfo('both', both)}
             {!!holiday && renderHoliday()}
+            {!am && !pm && !both && !holiday && renderNoData()}
         </>
     )
 }
