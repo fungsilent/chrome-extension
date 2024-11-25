@@ -132,13 +132,6 @@ const Day = props => {
         </div>
     )
 
-    const renderNoData = () => (
-        <div
-            className={`no-class`}
-            style={{ order: baseOrder + dayCount, gridRow: 'span 2' }}
-        ></div>
-    )
-    console.log(props)
     return (
         <>
             <div
@@ -151,7 +144,6 @@ const Day = props => {
             {!!pm && renderInfo('pm', pm)}
             {!!both && renderInfo('both', both)}
             {!!holiday && renderHoliday()}
-            {!am && !pm && !both && !holiday && renderNoData()}
         </>
     )
 }
