@@ -1,5 +1,10 @@
 # Weekly-schedule
 
+### How to use?
+[Document](doc/HowToUse.md)
+
+### Description
+
 Due to the CORS (Cross-Origin Resource Sharing) policy, development and testing are only permitted in a Chrome extension environment.\
 
 ### Install
@@ -34,11 +39,3 @@ weekly-schedule
 
 > [!NOTE]
 > You can also disable the relevant APIs and run UI development locally using `npm start`
-
-# git cheat sheet
-
-1. `git pull --rebase upstream main`
-2. `git add.`
-3. `git rebase --contine`
-4. `:x`
-5. `git push --force origin main`
